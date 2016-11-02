@@ -1,0 +1,5 @@
+D:\tahat\HandakiDevice\bin\Debug\HandakiDevice.dll
+D:\tahat\HandakiDevice\bin\Debug\HandakiDevice.pdb
+D:\tahat\HandakiDevice\obj\Debug\HandakiDevice.dll
+D:\tahat\HandakiDevice\obj\Debug\HandakiDevice.pdb
+D:\Tahat\HandakiDevice\obj\Debug\HandakiDevice.csprojResolveAssemblyReference.cache
