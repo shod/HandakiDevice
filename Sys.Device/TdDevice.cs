@@ -11,7 +11,7 @@ namespace Sys.Device
     public class TdDevice : Device, IDevice
     {
 
-        string[] lstAction = { "E700", "E701", "E709", "E707", "E765", "E764" }; //, "E764"
+        string[] lstAction = { "E700", "E701", "E709", "E707", "E765", "E764", "E7PING", "E763" }; //, "E764"
 
         public TdDevice()
         {            
@@ -63,34 +63,49 @@ namespace Sys.Device
     /// Класс для обработки команды вывода на цифровой индикатор
     /// </summary>
     class Action_E700 : Action, iAction
-    {
-        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC" };
+    {        
+        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "CRC" };
 
         public Action_E700()
         {
             base._MapProtocol = _MapProtocol;
+            base.iPckLen = 14;
+        }
+        public override string ProcessToDevice(XDocument xDoc)
+        {
+            string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC" };
+            string sPackage = "";
+            base._MapProtocol = _MapProtocol;
+            string _resDta = base.ProcessToDevice(xDoc);            
+
+            return _resDta;
         }
 
         public override ResponseData ProcessDevice(string txtPackageLine)
         {
-            string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "CRC" };
+            //string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "CRC" };
 
             // Это проверка на REG = 64 - это ответ на прошивку номера
             string strReg = txtPackageLine.Substring(8, 2);
-            
-            this.iPckLen = 14;
+
+            this.iPckLen = base.iPckLen;
+            IsEchoСonfirmTODevice = true;
+
             if (strReg == "00")
             {
+                string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC" };
+                base._MapProtocol = _MapProtocol;
+                //base.IsEchoСonfirmTODevice = false;
                 this.iPckLen = 12;
             }
             
-            ResponseData _resDta;
-            IsEchoСonfirmTODevice = true;
-            base._MapProtocol = _MapProtocol;
+            ResponseData _resDta;            
+
+
             _resDta = base.ProcessDevice(txtPackageLine);
             _resDta.strHead = "E7";
+            _resDta.strDataOriginal = txtPackageLine;
 
-            base._MapProtocol = this._MapProtocol;
             return _resDta;
         }
 
@@ -365,4 +380,99 @@ namespace Sys.Device
             return _resDta;
         }
     }
+
+    /// Класс для пинга устройства
+    /// </summary>
+    class Action_E763 : Action_E700, iAction
+    {
+        string[] _MapProtocol =  { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "PING_ALIVE", "CRC" };
+
+        public Action_E763()
+        {
+            base._MapProtocol = _MapProtocol;
+        }
+
+        public override ResponseData ProcessDevice(string txtPackageLine)
+        {
+            string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "PING_ALIVE", "CRC" };
+            base.iPckLen = 12;
+            ResponseData _resDta;
+            base._MapProtocol = _MapProtocol;
+            IsEchoСonfirmTODevice = true;
+            _resDta = base.ProcessDevice(txtPackageLine);
+            _resDta.strHead = "E7";
+            _resDta.strCRCCheck = "63";
+            _resDta.strEcho = "";
+            _resDta.IsEchoСonfirmCP = true;
+            return _resDta;
+        }
+    }
+
+    /// Класс для пинга устройства
+    /// </summary>
+    class Action_E7PING : Action_E700, iAction
+    {
+        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC" };
+
+        public Action_E7PING()
+        {
+            base._MapProtocol = _MapProtocol;
+        }
+
+        public override RequestData getObjectCommand(XDocument xDoc)
+        {
+            RequestData ResData = new RequestData();
+            ResData.isDeleteAllCommand = false;
+            ResData.isDeleteSimilarCommand = true;
+            ResData.IntervalSendCommand = 5;
+            _QueueCRCCode = "63";
+            return ResData;
+        }
+        public override string ProcessToDevice(XDocument xDoc)
+        {
+            base._QueueCRCCode = "63";
+            string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC" };
+            string sPackage = "";
+            string strCrc;
+            ResponseData dRes = new ResponseData();
+            XElement xEvent = xDoc.Element("EVENTS").Element("EVENT");
+            string sHeader = xEvent.Element("HEADER").Value;
+            string currcomname = "";
+
+            try
+            {
+                foreach (string lname in _MapProtocol)
+                {
+                    currcomname = lname;
+                    if (lname == "DESTADDR")
+                    {
+                        sPackage = xEvent.Element("DESTADDR").Value;
+                    }
+                    else if (lname == "SOURCEADDR")
+                    {
+                        sPackage = sPackage + RPCAddr;
+                    }
+                    else if (lname == "REG")
+                    {
+                        sPackage = sPackage + base._QueueCRCCode;
+                    }
+                    else if (lname != "HEADER" && lname != "CRC")
+                    {
+                        sPackage = sPackage + xEvent.Element("PARAMS").Element(lname).Value;
+                    }
+
+                }
+
+                strCrc = Helper.CreateCRC(sPackage);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("В файле команды " + this.GetType().Name + " отсутствует элемент - " + currcomname + xDoc.ToString());
+            }
+            base._QueueCRCCode = "63";
+            return sHeader + sPackage + strCrc;
+        }
+
+    }
+
 }
