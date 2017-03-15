@@ -90,13 +90,14 @@ namespace Sys.Device
 
             this.iPckLen = base.iPckLen;
             IsEchoСonfirmTODevice = true;
-
+            
+            this.iPckLen = 14;
             if (strReg == "00")
             {
                 string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC" };
                 base._MapProtocol = _MapProtocol;
                 //base.IsEchoСonfirmTODevice = false;
-                this.iPckLen = 12;
+                //this.iPckLen = 12;
             }
             
             ResponseData _resDta;            
