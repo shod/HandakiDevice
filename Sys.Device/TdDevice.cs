@@ -88,7 +88,6 @@ namespace Sys.Device
             string strReg = txtPackageLine.Substring(8, 2);
 
             this.iPckLen = base.iPckLen;
-            IsEchoСonfirmTODevice = true;            
             
             this.iPckLen = 14;
             if (strReg == "00")
