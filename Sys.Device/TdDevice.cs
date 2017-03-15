@@ -82,21 +82,25 @@ namespace Sys.Device
         }
 
         public override ResponseData ProcessDevice(string txtPackageLine)
-        {
-            //string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "CRC" };
+        {            
 
             // Это проверка на REG = 64 - это ответ на прошивку номера
             string strReg = txtPackageLine.Substring(8, 2);
 
             this.iPckLen = base.iPckLen;
-            IsEchoСonfirmTODevice = true;
-
+            IsEchoСonfirmTODevice = true;            
+            
+            this.iPckLen = 14;
             if (strReg == "00")
             {
-                string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC" };
+                string[] _MapProtocol = {"HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC"};
                 base._MapProtocol = _MapProtocol;
                 //base.IsEchoСonfirmTODevice = false;
-                this.iPckLen = 12;
+                //this.iPckLen = 12;
+            }
+            else {
+                string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "CRC" };
+                base._MapProtocol = _MapProtocol;
             }
             
             ResponseData _resDta;            
@@ -116,14 +120,12 @@ namespace Sys.Device
             string valdest = arrMessage[1];
             string valsource = arrMessage[2];
             string valReg = arrMessage[3];
+            string valBat = arrMessage[4];
             string valbody = "";
-            for (int i = 3; i < cnt - 1; i++)
-            {
-                valbody = valbody + arrMessage[i];
-            }
+            
             /* Режим - 00 Сброс всех установок
              */
-            valbody = valsource + valdest + valReg;
+            valbody = valsource + valdest + valReg + valBat;
             string strCrc = Helper.CreateCRC(valbody);
 
             if (valReg == "00"){
@@ -148,6 +150,41 @@ namespace Sys.Device
             }
             _QueueCRCCode = "";
             return ResData;
+        }
+
+        /*Обработка значение батареи*/
+        public override string GetBatValue(string[] arrPackage)
+        {
+            string res = "00";
+            //double ibat = Convert.ToDouble(Helper.HexToInt(arrPackage[4]));
+            res = arrPackage[4];
+
+            switch (res)
+            {
+                case "00":
+                    res = "100";
+                    break;
+                case "05":
+                    res = "5";
+                    break;
+                case "19":
+                    res = "25";
+                    break;
+                case "32":
+                    res = "50";
+                    break;
+                case "4B":
+                    res = "75";
+                    break;
+                case "64":
+                    res = "100";
+                    break;
+                default:
+                    res = "0";
+                    break;
+            }
+            
+            return res;
         }
     }
 
