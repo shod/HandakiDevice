@@ -177,6 +177,7 @@ namespace Sys.Device
             _resDta.strEcho = "";
             _resDta.strXMLData = "";
             _resDta.strHead = "77";
+            _resDta.IsEchoСonfirmCP = true;
             return _resDta;
         }
 
@@ -263,7 +264,8 @@ namespace Sys.Device
             IsEchoСonfirmTODevice = true;
             _resDta = base.ProcessDevice(txtPackageLine);
             _resDta.strIdDevice = RPCAddr;
-            _resDta.strHead = "77";            
+            _resDta.strHead = "77";
+            _resDta.IsEchoСonfirmCP = true;
             return _resDta;
         }
 
@@ -322,7 +324,8 @@ namespace Sys.Device
             ResponseData _resDta;
             base._MapProtocol = _MapProtocol;
             _resDta = base.ProcessDevice(txtPackageLine);
-            _resDta.strHead = "77";            
+            _resDta.strHead = "77";
+            _resDta.IsEchoСonfirmCP = true;
             return _resDta;
         }
     }
@@ -341,7 +344,8 @@ namespace Sys.Device
             IsEchoСonfirmTODevice = true;
             base._MapProtocol = _MapProtocol;
             _resDta = base.ProcessDevice(txtPackageLine);
-            _resDta.strHead = "77";            
+            _resDta.strHead = "77";
+            _resDta.IsEchoСonfirmCP = true;
             return _resDta;
         }       
     }
@@ -361,7 +365,8 @@ namespace Sys.Device
             IsEchoСonfirmTODevice = true;
             base._MapProtocol = _MapProtocol;
             _resDta = base.ProcessDevice(txtPackageLine);
-            _resDta.strHead = "77";            
+            _resDta.strHead = "77";
+            _resDta.IsEchoСonfirmCP = true;
             return _resDta;
         }
 
@@ -392,7 +397,8 @@ namespace Sys.Device
             _resDta.strXMLData = "";
             _resDta.strDataOriginal = txtPackageLine;// _resDta.strEcho;
             _resDta.strEcho = "";
-            _resDta.strHead = "77";            
+            _resDta.strHead = "77";
+            _resDta.IsEchoСonfirmCP = true;
             return _resDta;
         }
 

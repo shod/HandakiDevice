@@ -11,7 +11,7 @@ namespace Sys.Device
     public class TdDevice : Device, IDevice
     {
 
-        string[] lstAction = { "E700", "E701", "E709", "E707", "E765", "E764", "E7PING", "E763" }; //, "E764"
+        string[] lstAction = { "E700", "E701", "E709", "E707", "E765", "E764", "E7PING", "E763", "E7BUT" }; //, "E764"
 
         public TdDevice()
         {            
@@ -45,9 +45,12 @@ namespace Sys.Device
             switch (sDKey)
             {
                 case "00":                
-                case "02":
-                case "03":                
                     sHKey = sHKey + "00";
+                    break;                
+                case "02":
+                case "01":                
+                case "03":                
+                    sHKey = sHKey + "BUT";
                     break;
                 default:
                     sHKey = sHKey + sDKey;
@@ -64,12 +67,12 @@ namespace Sys.Device
     /// </summary>
     class Action_E700 : Action, iAction
     {        
-        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "CRC" };
+        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC" };
 
         public Action_E700()
         {
             base._MapProtocol = _MapProtocol;
-            base.iPckLen = 14;
+            base.iPckLen = 12;
         }
         public override string ProcessToDevice(XDocument xDoc)
         {
@@ -88,19 +91,13 @@ namespace Sys.Device
             string strReg = txtPackageLine.Substring(8, 2);
 
             this.iPckLen = base.iPckLen;
-            
-            this.iPckLen = 14;
+            IsEchoСonfirmTODevice = false;            
+                        
             if (strReg == "00")
             {
-                string[] _MapProtocol = {"HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC"};
-                base._MapProtocol = _MapProtocol;
-                //base.IsEchoСonfirmTODevice = false;
-                //this.iPckLen = 12;
-            }
-            else {
-                string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "CRC" };
-                base._MapProtocol = _MapProtocol;
-            }
+                string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC" };
+                base._MapProtocol = _MapProtocol;            
+            }            
             
             ResponseData _resDta;            
 
@@ -108,6 +105,7 @@ namespace Sys.Device
             _resDta = base.ProcessDevice(txtPackageLine);
             _resDta.strHead = "E7";
             _resDta.strDataOriginal = txtPackageLine;
+            _resDta.IsEchoСonfirmCP = false;
 
             return _resDta;
         }
@@ -231,6 +229,41 @@ namespace Sys.Device
             {
                 return valheader + valbody + strCrc;
             }
+        }
+
+        /*Обработка значение батареи*/
+        public override string GetBatValue(string[] arrPackage)
+        {
+            string res = "00";
+            //double ibat = Convert.ToDouble(Helper.HexToInt(arrPackage[4]));
+            res = arrPackage[4];
+
+            switch (res)
+            {
+                case "00":
+                    res = "100";
+                    break;
+                case "05":
+                    res = "5";
+                    break;
+                case "19":
+                    res = "25";
+                    break;
+                case "32":
+                    res = "50";
+                    break;
+                case "4B":
+                    res = "75";
+                    break;
+                case "64":
+                    res = "100";
+                    break;
+                default:
+                    res = "0";
+                    break;
+            }
+
+            return res;
         }
     }
 
@@ -434,10 +467,10 @@ namespace Sys.Device
             base.iPckLen = 12;
             ResponseData _resDta;
             base._MapProtocol = _MapProtocol;
-            IsEchoСonfirmTODevice = true;
+            IsEchoСonfirmTODevice = false;
             _resDta = base.ProcessDevice(txtPackageLine);
             _resDta.strHead = "E7";
-            _resDta.strCRCCheck = "63";
+            //_resDta.strCRCCheck = "63";
             _resDta.strEcho = "";
             _resDta.IsEchoСonfirmCP = true;
             return _resDta;
@@ -509,6 +542,109 @@ namespace Sys.Device
             return sHeader + sPackage + strCrc;
         }
 
+    }
+
+    /// <summary>
+    /// Класс для обработки команды нажатия на кнопки
+    /// </summary>
+    class Action_E7BUT : Action, iAction
+    {
+        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "CRC" };
+        public override ResponseData ProcessDevice(string txtPackageLine)
+        {
+            //14            
+            this.iPckLen = 14;
+            ResponseData _resDta;
+            IsEchoСonfirmTODevice = true;
+            _resDta.IsEchoСonfirmCP = true;
+            base._MapProtocol = _MapProtocol;
+
+            /*Если это эхо ответ от ТВ, то не нужно посылать подтверждение
+           * Trello #https://trello.com/c/d3RMOq4P
+           */
+            if (txtPackageLine.Length == 12)
+            {
+                this.iPckLen = 12;             
+            }
+
+            _resDta = base.ProcessDevice(txtPackageLine);
+            _resDta.strHead = "E7";
+            _resDta.IsEchoСonfirmCP = true;
+
+            /*Дополнительный ответ от ТВ*/
+            if (txtPackageLine.Length == 12)
+            {                
+                _resDta.IsEchoСonfirmCP = false;                
+                IsEchoСonfirmTODevice = false;
+                _resDta.strEcho = "";
+                _resDta.IsError = false;
+            }
+            
+          
+            return _resDta;
+        }
+
+        //override
+        public override string FormatEchoMessage(string[] arrMessage)
+        {
+            int cnt = arrMessage.Length;
+            string valheader = arrMessage[0];
+            string valdest = arrMessage[1];
+            string valsource = arrMessage[2];
+            string valReg = arrMessage[3];
+            string valBat = arrMessage[4];
+            string valbody = "";
+
+            /* Режим - 00 Сброс всех установок
+             * + valBat Изменено
+             */
+            valbody = valsource + valdest + valReg;
+            string strCrc = Helper.CreateCRC(valbody);
+
+            if (valReg == "00" || cnt == 4)
+            {
+                return "";
+            }
+            else
+            {
+                return valheader + valbody + strCrc;
+            }
+        }
+
+        /*Обработка значение батареи*/
+        public override string GetBatValue(string[] arrPackage)
+        {
+            string res = "00";
+            //double ibat = Convert.ToDouble(Helper.HexToInt(arrPackage[4]));
+            res = arrPackage[4];
+
+            switch (res)
+            {
+                case "00":
+                    res = "100";
+                    break;
+                case "05":
+                    res = "5";
+                    break;
+                case "19":
+                    res = "25";
+                    break;
+                case "32":
+                    res = "50";
+                    break;
+                case "4B":
+                    res = "75";
+                    break;
+                case "64":
+                    res = "100";
+                    break;
+                default:
+                    res = "0";
+                    break;
+            }
+
+            return res;
+        }
     }
 
 }

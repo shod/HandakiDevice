@@ -258,7 +258,8 @@ namespace Sys.Device
             if (_dicActions.ContainsKey(sHeaderDKey))
             {
                 actClass = _dicActions[sHeaderDKey];
-                _resDta = actClass.ProcessDevice(txtPackageLine);
+                //_resDta.IsEchoСonfirmCP = true;
+                _resDta = actClass.ProcessDevice(txtPackageLine);                
             }
             else
             {
@@ -783,9 +784,10 @@ namespace Sys.Device
                 }
                 else if (IsEchoСonfirmTODevice)
                 {
-                    _resDta.strEcho = FormatEchoMessage(arrPackage);
-                    _resDta.strXMLData = ArrayToXML(arrPackage, _MapProtocol);
+                    _resDta.strEcho = FormatEchoMessage(arrPackage);                    
                 }
+                /*Пакет для КП*/                
+                _resDta.strXMLData = ArrayToXML(arrPackage, _MapProtocol);                
             }
             catch (Exception exp)
             {

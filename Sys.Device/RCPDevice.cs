@@ -96,10 +96,11 @@ namespace Sys.Device
         {
             this.iPckLen = 11 * 2;
             ResponseData _resDta;
-            IsEchoСonfirmTODevice = true;
+            IsEchoСonfirmTODevice = true;            
             _resDta = base.ProcessDevice(txtPackageLine);
             _resDta.strIdDevice = RPCAddr;
             _resDta.strHead = "96";
+            _resDta.IsEchoСonfirmCP = true;
             Thread.Sleep(300);
             return _resDta;
         }
@@ -176,6 +177,7 @@ namespace Sys.Device
             _resDta.IsError = false;
             _resDta.strHead = "96";
             _resDta.strXMLData = "";
+            _resDta.IsEchoСonfirmCP = true;
             Thread.Sleep(300);
             return _resDta;
         }
@@ -249,6 +251,7 @@ namespace Sys.Device
             _resDta = base.ProcessDevice(txtPackageLine + CRC);
             _resDta.strIdDevice = RPCAddr;
             _resDta.strHead = "96";
+            _resDta.IsEchoСonfirmCP = true;
             Thread.Sleep(300);
             return _resDta;
         }
@@ -267,7 +270,7 @@ namespace Sys.Device
             _resDta.strDataOriginal = txtPackageLine;
             _resDta.strXMLData = "";
             _resDta.strDataRest = "";
-            _resDta.strIdDevice = RPCAddr;
+            _resDta.strIdDevice = RPCAddr;            
             return _resDta;
         }
     }
@@ -289,6 +292,7 @@ namespace Sys.Device
             _resDta.strXMLData = "";
             _resDta.strDataRest = "";
             _resDta.strIdDevice = RPCAddr;
+            _resDta.IsEchoСonfirmCP = true;
             return _resDta;
         }
     }
@@ -352,6 +356,7 @@ namespace Sys.Device
             _resDta = base.ProcessDevice(txtPackageLine);
             _resDta.strIdDevice = RPCAddr;
             _resDta.strHead = "96";
+            _resDta.IsEchoСonfirmCP = true;
             return _resDta;
         }
         public override string ArrayToXML(string[] arrPackage, string[] _MapProtocol)

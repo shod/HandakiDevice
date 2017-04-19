@@ -146,6 +146,7 @@ namespace Sys.Device
                 _resDta.strEcho = FormatEchoMessage(arrPackage);
                 _resDta.strXMLData = ArrayToXML(arrPackage, var_mapProtocol);
             }
+            _resDta.IsEchoСonfirmCP = true;
             return _resDta;
         }        
 
@@ -300,6 +301,7 @@ namespace Sys.Device
                 _resDta.strXMLData = ArrayToXML(arrPackage, _MapProtocol);
             }
             arrPackage[0] = "21";
+            _resDta.IsEchoСonfirmCP = true;
             return _resDta;
         }
 
@@ -368,7 +370,7 @@ namespace Sys.Device
         {
             string sPackage = "";
             base._MapProtocol = _MapProtocol;
-            string _resDta = base.ProcessToDevice(xDoc);            
+            string _resDta = base.ProcessToDevice(xDoc);
             return _resDta;
         }
 
