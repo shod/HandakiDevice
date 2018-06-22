@@ -18,28 +18,6 @@ namespace Sys.Device
         }
 
 
-
-            /*_dicActions = new Dictionary<string, iAction>();                        
-
-            foreach(string Action in lstAction){
-                Type TestType = Type.GetType("Sys.Device.Action_" + Action, false, true);
-                //если класс не найден
-                if (TestType != null)
-                {
-                    //получаем конструктор
-                    System.Reflection.ConstructorInfo ci = TestType.GetConstructor(new Type[] { });
-
-                    //вызываем конструтор
-                    iAction Obj = (iAction)ci.Invoke(new object[] { });
-                    _dicActions.Add(Action, Obj);
-                }
-                else
-                {
-                    Console.WriteLine("Sys.Device.Action_" + Action);
-                }
-            }
-        }
-        */
         public Dictionary<string, ActionMetaInfo> GetMetaInfo()
         {
             var MetaInfo = new Dictionary<string, ActionMetaInfo>();
@@ -88,24 +66,11 @@ namespace Sys.Device
 
     /// <summary>
     /// Сообщения с RFID-идентификацией
+    /// Раскоментировать для работы с короткими номерами карт
     /// </summary>
-    class Action_96 : Action, iAction
+    class Action_96 : Action_96_Base
     {
-        string[] _MapProtocol = { "HEADER", "REG", "CARD", "CRC" };
-        public override ResponseData ProcessDevice(string txtPackageLine)
-        {
-            this.iPckLen = 11 * 2;
-            ResponseData _resDta;
-            IsEchoСonfirmTODevice = true;            
-            _resDta = base.ProcessDevice(txtPackageLine);
-            _resDta.strIdDevice = RPCAddr;
-            _resDta.strHead = "96";
-            _resDta.IsEchoСonfirmCP = true;
-            Thread.Sleep(300);
-            return _resDta;
-        }
-       
-
+        
         public override string ArrayToXML(string[] arrPackage, string[] _MapProtocol)
         {
             XDocument doc = new XDocument();
@@ -136,29 +101,19 @@ namespace Sys.Device
 
             //создаем элемент "event"                
             item = new XElement("RFID");
-            for (int i = 2; i < arrPackage.Length-1; i++)
+            for (int i = 2; i < 2+5; i++)
             {                                
                 //складываем все цифры карты
                 item.Value = item.Value + arrPackage[i];                
             }
+            item.Value = item.Value.Substring(2);
             pr.Add(item);
             ev.Add(pr);
             events.Add(ev);
             doc.Add(events);
             return doc.ToString();
         }
-
-        public override string FormatEchoMessage(string[] arrMessage)
-        {
-            int cnt = arrMessage.Length;
-            string valheader = arrMessage[0];
-            string valcrc = arrMessage[cnt-1];
-            string valreg = arrMessage[1];
-                        
-            string strCrc = Helper.CreateCRC(valreg+valcrc);
-
-            return valheader + valreg + valcrc + strCrc;
-        }
+        
     }
 
 

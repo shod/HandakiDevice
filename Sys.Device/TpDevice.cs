@@ -30,15 +30,23 @@ namespace Sys.Device
             AInfo.DeviceName = "tpdevice";
             AInfo.isCheckEcho = false;
             AInfo.isWaitRequest = true;
-
-            MetaInfo.Add("33", AInfo);
+            AInfo.isDeleteCommandAfterSend = false;
+            AInfo.TimeLive = 120;
+            MetaInfo.Add("33", AInfo); //Сообщение о нажатии на кнопки  ТП
 
             AInfo = new ActionMetaInfo();
             AInfo.DeviceName = "tpdevice";
             AInfo.isCheckEcho = false;
             AInfo.isWaitRequest = true;
             AInfo.TimeLive = 3600*48;
-            MetaInfo.Add("21", AInfo);
+            MetaInfo.Add("21", AInfo); //Периодическое сообщение от ТП
+
+            AInfo = new ActionMetaInfo();
+            AInfo.DeviceName = "tpdevice";
+            AInfo.isCheckEcho = false;
+            AInfo.isWaitRequest = true;
+            AInfo.TimeLive = 3600 * 48;
+            MetaInfo.Add("3321", AInfo); //Периодическое сообщение от ТП
 
             AInfo = new ActionMetaInfo();
             AInfo.DeviceName = "tpdevice";
@@ -67,9 +75,17 @@ namespace Sys.Device
 
         public override string getActionIndex(string txtPackageLine)
         {
-            string sDKey = txtPackageLine.Substring(0, 2);            
+            string sDKey = txtPackageLine.Substring(0, 2);
+            /*if (sDKey == "33")
+            {
+                string reg = txtPackageLine.Substring(2, 2);
+                if (reg == "21")
+                {
+                    sDKey = sDKey + reg; //Находим байт REG  
+                }
+            }*/
             return sDKey;
-        }
+        }        
 
     }
 

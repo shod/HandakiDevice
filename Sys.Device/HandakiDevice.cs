@@ -4,17 +4,19 @@ using System.Linq;
 using System.Text;
 
 namespace Sys.Device
-{
+{    
     /// <summary>
     /// Класс системного модуля Handaki
     /// </summary>
     public class HandakiDevice : Device, IDevice
     {
+        public Dictionary<Device, Device> MetaClassRcpDevice; // = new Dictionary<Device, Device>();
         string[] lstAction = { "EE00"};
 
         public HandakiDevice()
         {            
             InitAction(lstAction);
+            MetaClassRcpDevice = new Dictionary<Device, Device>();
         }
 
         /// <summary>

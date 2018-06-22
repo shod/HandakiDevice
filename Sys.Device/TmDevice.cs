@@ -252,23 +252,10 @@ namespace Sys.Device
 
      /// <summary>
     /// Класс для обработки сообщения c RFID-идентификацией
+    /// Раскоментировать для работы с короткими номерами карт
     /// </summary>
-    class Action_7720 : Action, iAction
+    class Action_7720 : Action_7720_Base
     {
-        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "RFID", "CRC" };
-        
-        public override ResponseData ProcessDevice(string txtPackageLine)
-        {
-            this.iPckLen = 14 * 2;
-            ResponseData _resDta;
-            IsEchoСonfirmTODevice = true;
-            _resDta = base.ProcessDevice(txtPackageLine);
-            _resDta.strIdDevice = RPCAddr;
-            _resDta.strHead = "77";
-            _resDta.IsEchoСonfirmCP = true;
-            return _resDta;
-        }
-
         public override string ArrayToXML(string[] arrPackage, string[] _MapProtocol)
         {
             XDocument doc = new XDocument();
@@ -299,11 +286,12 @@ namespace Sys.Device
 
             //создаем элемент "event"                
             item = new XElement("RFID");
-            for (int i = 4; i < arrPackage.Length - 1; i++)
+            for (int i = 4; i < 4+6; i++)
             {
                 //складываем все цифры карты
                 item.Value = item.Value + arrPackage[i];
             }
+            item.Value = item.Value.Substring(2);
             pr.Add(item);
             ev.Add(pr);
             events.Add(ev);

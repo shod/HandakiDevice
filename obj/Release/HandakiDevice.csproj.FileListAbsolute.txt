@@ -3,3 +3,8 @@ D:\tahat\HandakiDevice\bin\Release\HandakiDevice.pdb
 D:\tahat\HandakiDevice\obj\Release\HandakiDevice.dll
 D:\tahat\HandakiDevice\obj\Release\HandakiDevice.pdb
 D:\Tahat\HandakiDevice\obj\Release\HandakiDevice.csprojResolveAssemblyReference.cache
+C:\Project\Tahat\HandakiDevice\bin\Release\HandakiDevice.dll
+C:\Project\Tahat\HandakiDevice\bin\Release\HandakiDevice.pdb
+C:\Project\Tahat\HandakiDevice\obj\Release\HandakiDevice.dll
+C:\Project\Tahat\HandakiDevice\obj\Release\HandakiDevice.pdb
+C:\Project\Tahat\HandakiDevice\obj\Release\HandakiDevice.csprojResolveAssemblyReference.cache

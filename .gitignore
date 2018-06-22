@@ -49,3 +49,6 @@ Temporary Items
 bin/
 
 obj/Debug/
+*.cache
+*.cache
+*.cache

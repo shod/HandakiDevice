@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Sys.Device
 {
+
     public class ActionMetaInfo
     {
         /// <summary>
@@ -24,9 +25,20 @@ namespace Sys.Device
         public bool isWaitRequest;
 
         /// <summary>
-        /// Время жизни команды
+        /// Время жизни команды (сек)
         /// </summary>
         public int TimeLive;
+
+        /// <summary>
+        /// Удалять ли команду после отсылки (true)
+        /// или оставлять до окончания времени жизни команды (TimeLive)
+        /// </summary>
+        public bool isDeleteCommandAfterSend;
+
+        /// <summary>
+        /// Кол-во попыток отсылки команды
+        /// </summary>
+        public int CountAttSend;        
 
         public ActionMetaInfo()
         {
@@ -34,6 +46,8 @@ namespace Sys.Device
             this.isCheckEcho = false;
             this.isWaitRequest = true;
             this.TimeLive = 95;
+            this.isDeleteCommandAfterSend = true;
+            this.CountAttSend = 5;
         }
     }
 
@@ -739,8 +753,8 @@ namespace Sys.Device
 
             try
             {
-
-                 txtPackageLine = txtPackageLine.Replace(" ", "");
+                 
+                 txtPackageLine = txtPackageLine.Replace(" ", "").ToUpper();
                  if (txtPackageLine.Length < iPckLen)
                  {
                      _resDta.IsError = true;
