@@ -6,7 +6,7 @@ using System.Text;
 namespace Sys.Device
 {
       /// <summary>
-    /// Класс для обработки сообщения c RFID-идентификацией
+    /// Класс для обработки сообщения c RFID-идентификацией длинные номера!!!
     /// </summary>
     class Action_7720_Base : Action, iAction
     {

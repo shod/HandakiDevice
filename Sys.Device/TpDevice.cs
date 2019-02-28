@@ -53,7 +53,7 @@ namespace Sys.Device
             AInfo.isCheckEcho = true;
             AInfo.isWaitRequest = true;
             AInfo.TimeLive = 3600;
-            MetaInfo.Add("39", AInfo); // смена номера устройства
+            MetaInfo.Add("39", AInfo); // пустой класс
 
             AInfo = new ActionMetaInfo();
             AInfo.DeviceName = "tpdevice";
@@ -225,6 +225,25 @@ namespace Sys.Device
             string strCrc = Helper.CreateCRC(valbody);
 
             return valheader + valbody + strCrc;
+        }
+    }
+
+    /// <summary>
+    /// Класс для обработки сообщения о смене частоты устойства
+    /// </summary>
+    class Action_39 : Action, iAction
+    {
+
+        public override ResponseData ProcessDevice(string txtPackageLine)
+        {
+            string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "NUM", "CRC" };
+            this.iPckLen = 16;
+            ResponseData _resDta;
+            base._MapProtocol = _MapProtocol;
+            _resDta = base.ProcessDevice(txtPackageLine);
+            _resDta.strHead = "39";
+            _resDta.IsEchoСonfirmCP = true;
+            return _resDta;
         }
     }
 

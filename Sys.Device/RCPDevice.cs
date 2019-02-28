@@ -66,11 +66,11 @@ namespace Sys.Device
 
     /// <summary>
     /// Сообщения с RFID-идентификацией
-    /// Раскоментировать для работы с короткими номерами карт
+    /// Раскоментировать базовый класс для работы с короткими номерами карт
     /// </summary>
-    class Action_96 : Action_96_Base
+    class Action_96 : Action_96_Base /* : Action, iAction*/
     {
-        
+       
         public override string ArrayToXML(string[] arrPackage, string[] _MapProtocol)
         {
             XDocument doc = new XDocument();
@@ -114,8 +114,8 @@ namespace Sys.Device
             return doc.ToString();
         }
         
+        
     }
-
 
     /// <summary>
     /// Команда установки частотного канала радиомодуля БК

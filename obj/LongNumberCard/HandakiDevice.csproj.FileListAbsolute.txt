@@ -1,0 +1,5 @@
+C:\Project\Tahat\HandakiDevice\bin\LongNumberCard\HandakiDevice.dll
+C:\Project\Tahat\HandakiDevice\bin\LongNumberCard\HandakiDevice.pdb
+C:\Project\Tahat\HandakiDevice\obj\LongNumberCard\HandakiDevice.csprojResolveAssemblyReference.cache
+C:\Project\Tahat\HandakiDevice\obj\LongNumberCard\HandakiDevice.dll
+C:\Project\Tahat\HandakiDevice\obj\LongNumberCard\HandakiDevice.pdb

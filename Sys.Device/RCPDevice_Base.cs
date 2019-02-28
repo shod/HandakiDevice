@@ -8,7 +8,7 @@ namespace Sys.Device
     
     
         /// <summary>
-        /// Сообщения с RFID-идентификацией
+        /// Сообщения с RFID-идентификацией с длинными номерами!!!!
         /// </summary>
         class Action_96_Base : Action, iAction
         {

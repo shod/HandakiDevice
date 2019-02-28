@@ -223,6 +223,7 @@ namespace Sys.Device
                 else
                 {
                     Console.WriteLine("Sys.Device.Action_" + Action);
+                    throw new Exception("Нет заявленного действия в конструкторе для Sys.Device.Action_" + Action);
                 }
             }
         }

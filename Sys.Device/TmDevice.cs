@@ -298,11 +298,12 @@ namespace Sys.Device
             doc.Add(events);
             return doc.ToString();
         }
+         
     }
 
     /// Класс для обработки вызова врача
     /// </summary>
-    class Action_7722 : Action_7720, iAction
+    class Action_7722 : Action_7720_Base /*: Action, iAction*/
     {
         string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "RFID", "CRC" };
 
@@ -317,6 +318,7 @@ namespace Sys.Device
             return _resDta;
         }
     }
+     
 
     /// <summary>
     /// Класс для обработки нажатия на кнопку
