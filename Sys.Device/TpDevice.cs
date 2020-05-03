@@ -291,7 +291,7 @@ namespace Sys.Device
     class Action_21 : Action, iAction
     {
         //"PING_ALIVE" 
-        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "TB", "RSSI", "CRC" };
+        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "TB", "RSSI", "PING_ALIVE", "CRC" };
         int iPckLen = (8 * 2)+2;
 
         public ResponseData ProcessDevice(string txtPackageLine)
@@ -332,7 +332,7 @@ namespace Sys.Device
             else
             {
                 _resDta.strEcho = FormatEchoMessage(arrPackage);
-                arrPackage[0] = "33";
+                arrPackage[0] = "33"; 
                 _resDta.strXMLData = ArrayToXML(arrPackage, _MapProtocol);
             }
             arrPackage[0] = "21";
