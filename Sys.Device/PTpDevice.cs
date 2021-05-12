@@ -8,15 +8,15 @@ namespace Sys.Device
     /// <summary>
     /// Класс для терминала пациента
     /// </summary>
-    public class TpDevice : Device, IDevice
+    public class PTpDevice : Device, IDevice
     {
 
-        string[] lstAction = { "3300", "33", "21", "39", "3321", "3365", "3364" };
+        string[] lstAction = { "3500", "35", "3565", "3564" };
 
-        public TpDevice()
+        public PTpDevice()
         {                      
             InitAction(lstAction);
-            _PingHeader = "21";
+            _PingHeader = "35";
         }   
 
         /// <summary>
@@ -27,47 +27,27 @@ namespace Sys.Device
         {
             var MetaInfo = new Dictionary<string, ActionMetaInfo>();
             ActionMetaInfo AInfo = new ActionMetaInfo();
-            AInfo.DeviceName = "tpdevice";
+            AInfo.DeviceName = "ptpdevice";
             AInfo.isCheckEcho = false;
             AInfo.isWaitRequest = true;
             AInfo.isDeleteCommandAfterSend = false;
             AInfo.TimeLive = 120;
-            MetaInfo.Add("33", AInfo); //Сообщение о нажатии на кнопки  ТП
+            MetaInfo.Add("35", AInfo); //Сообщение о нажатии на кнопки  ТП
+
 
             AInfo = new ActionMetaInfo();
-            AInfo.DeviceName = "tpdevice";
-            AInfo.isCheckEcho = false;
-            AInfo.isWaitRequest = true;
-            AInfo.TimeLive = 3600*48;
-            MetaInfo.Add("21", AInfo); //Периодическое сообщение от ТП
-
-            AInfo = new ActionMetaInfo();
-            AInfo.DeviceName = "tpdevice";
-            AInfo.isCheckEcho = false;
-            AInfo.isWaitRequest = true;
-            AInfo.TimeLive = 3600 * 48;
-            MetaInfo.Add("3321", AInfo); //Периодическое сообщение от ТП
-
-            AInfo = new ActionMetaInfo();
-            AInfo.DeviceName = "tpdevice";
-            AInfo.isCheckEcho = true;
-            AInfo.isWaitRequest = true;
-            AInfo.TimeLive = 3600;
-            MetaInfo.Add("39", AInfo); // пустой класс
-
-            AInfo = new ActionMetaInfo();
-            AInfo.DeviceName = "tpdevice";
+            AInfo.DeviceName = "ptpdevice";
             AInfo.isCheckEcho = true;
             AInfo.isWaitRequest = true;
             AInfo.TimeLive = 300;
-            MetaInfo.Add("3364", AInfo); // смена номера устройства
+            MetaInfo.Add("3564", AInfo); // смена номера устройства
 
             AInfo = new ActionMetaInfo();
             AInfo.DeviceName = "tpdevice";
             AInfo.isCheckEcho = true;
             AInfo.isWaitRequest = true;
             AInfo.TimeLive = 300;    
-            MetaInfo.Add("3365", AInfo); // смена номера частоты
+            MetaInfo.Add("3565", AInfo); // смена номера частоты
             
 
             return MetaInfo;
@@ -75,16 +55,7 @@ namespace Sys.Device
 
         public override string getActionIndex(string txtPackageLine)
         {
-            string sDKey = txtPackageLine.Substring(0, 2);
-            /*if (sDKey == "33")
-            {
-                string reg = txtPackageLine.Substring(2, 2);
-                if (reg == "21")
-                {
-                    sDKey = sDKey + reg; //Находим байт REG  
-                }
-            }*/
-            return sDKey;
+            return txtPackageLine.Substring(0, 2);
         }        
 
     }
@@ -92,21 +63,22 @@ namespace Sys.Device
     /// <summary>
     /// Класс для обработки сообщения о нажатии кнопки
     /// </summary>
-    class Action_33 : Action_3500
+    class Action_35 : Action_3500
     {
 
     }
 
-    class Action_3300 : Action, iAction
+    class Action_3500 : Action, iAction
     {
-        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC" };
-        int iPckLen = 6 * 2;
+        string[] _MapProtocol = { "HEADER", "SOURCEADDR", "REG", "Nbyte", "Ubat", "CRC" };
+        int iPckLen = 7 * 2;
 
         public ResponseData ProcessDevice(string txtPackageLine){
             ResponseData _resDta = new ResponseData();
             string[] var_mapProtocol;
+            var_mapProtocol = _MapProtocol;
 
-            _resDta.strHead = "33";
+            _resDta.strHead = "35";
             _resDta.IsError = false;
                         
             txtPackageLine = txtPackageLine.Replace(" ","");
@@ -120,7 +92,7 @@ namespace Sys.Device
             string txtPackage = txtPackageLine.Substring(0,iPckLen);
             string txtPackageData = txtPackageLine.Substring(2,iPckLen-4);
 
-            string[] arrPackage = SplitLine(txtPackage);
+            string[] arrPackage = SplitLine(txtPackage, _MapProtocol);
             
             _resDta.strIdDevice = arrPackage[2];
             _resDta.strDataRest = txtPackageLine.Substring(iPckLen);                        
@@ -134,8 +106,7 @@ namespace Sys.Device
             string strCrc = Helper.CreateCRC(txtPackageData);
 
             /*Обработка режимов */
-
-            if ((arrPackage[3] == "03") | (arrPackage[3] == "07"))
+            /*if ((arrPackage[3] == "03") | (arrPackage[3] == "07"))
             {                                
                 var_mapProtocol = new string[]
                 {
@@ -149,8 +120,9 @@ namespace Sys.Device
                 {
                     _resDta.IsBeep = true;                        
                 }                
-            }
+            }*/
 
+            _resDta.IsBeep = true;
 
             /*Проверка на верность CRC*/
             if (strCrc != arrPackage[arrPackage.Length - 1])
@@ -201,7 +173,7 @@ namespace Sys.Device
             }
             catch (Exception ex)
             {
-                throw new Exception("В файле команды 33 отсутствует элемент - " + currcomname);
+                throw new Exception("В файле команды 35 отсутствует элемент - " + currcomname);
             }
             return sHeader+sPackage + strCrc;
         }
@@ -231,7 +203,7 @@ namespace Sys.Device
     /// <summary>
     /// Класс для обработки сообщения о смене частоты устойства
     /// </summary>
-    class Action_39 : Action, iAction
+    class Action_3339 : Action, iAction
     {
 
         public override ResponseData ProcessDevice(string txtPackageLine)
@@ -241,35 +213,17 @@ namespace Sys.Device
             ResponseData _resDta;
             base._MapProtocol = _MapProtocol;
             _resDta = base.ProcessDevice(txtPackageLine);
-            _resDta.strHead = "39";
+            _resDta.strHead = "3339";
             _resDta.IsEchoСonfirmCP = true;
             return _resDta;
         }
     }
 
-    /// <summary>
-    /// Класс для обработки сообщения о смене частоты устойства
-    /// </summary>
-    class Action_3965 : Action, iAction
-    {
-
-        public override ResponseData ProcessDevice(string txtPackageLine)
-        {
-            string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "NUM", "CRC" };
-            this.iPckLen = 16;
-            ResponseData _resDta;
-            base._MapProtocol = _MapProtocol;
-            _resDta = base.ProcessDevice(txtPackageLine);
-            _resDta.strHead = "39";
-            _resDta.IsEchoСonfirmCP = true;
-            return _resDta;
-        }
-    }
 
     /// <summary>
     /// Класс для обработки сообщения для установки TSLEEP
     /// </summary>
-    class Action_3321 : Action, iAction
+    class Action_3521 : Action, iAction
     {
 
         public override string ProcessToDevice(XDocument xDoc)
@@ -286,113 +240,9 @@ namespace Sys.Device
     }
 
     /// <summary>
-    /// Класс для обработки сообщения о пинге от устройства
-    /// </summary>
-    class Action_21 : Action, iAction
-    {
-        //"PING_ALIVE" 
-        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "TB", "RSSI", "PING_ALIVE", "CRC" };
-        int iPckLen = (8 * 2)+2;
-
-        public ResponseData ProcessDevice(string txtPackageLine)
-        {
-            ResponseData _resDta = new ResponseData();
-            _resDta.strHead = "21";
-            _resDta.IsError = false;
-
-            txtPackageLine = txtPackageLine.Replace(" ", "");
-
-            if (txtPackageLine.Length < iPckLen)
-            {
-                _resDta.IsError = true;
-                return _resDta;
-            }
-
-            string txtPackage = txtPackageLine.Substring(0, iPckLen);
-            string txtPackageData = txtPackageLine.Substring(2, iPckLen - 4);
-
-            _resDta.strIdDevice = txtPackageLine.Substring(4, 4);
-            _resDta.strDataRest = txtPackageLine.Substring(iPckLen);
-
-            string[] arrPackage = SplitLine(txtPackage);
-            
-
-            if (arrPackage.Length+1 != iPckLen / 2)
-            {
-                _resDta.IsError = true;
-            }
-
-            string strCrc = Helper.CreateCRC(txtPackageData);
-
-            /*Проверка на верность CRC*/
-            if (strCrc != arrPackage[arrPackage.Length - 1])
-            {
-                _resDta.IsError = true;
-            }
-            else
-            {
-                _resDta.strEcho = FormatEchoMessage(arrPackage);
-                arrPackage[0] = "33"; 
-                _resDta.strXMLData = ArrayToXML(arrPackage, _MapProtocol);
-            }
-            arrPackage[0] = "21";
-            _resDta.IsEchoСonfirmCP = true;
-            return _resDta;
-        }
-
-        /// <summary>
-        /// Создание Echo пакета
-        /// </summary>
-        /// <param name="arrMessage"></param>
-        /// <returns></returns>
-        public override string FormatEchoMessage(string[] arrMessage)
-        {
-            int cnt = arrMessage.Length;
-            string valheader = arrMessage[0];
-            string valdest = arrMessage[1];
-            string valsource = arrMessage[2];
-
-            string tsleep = "00";
-            
-            string valbody = valsource + valdest + tsleep;
-            string strCrc = Helper.CreateCRC(valbody);
-
-            return valheader + valbody + strCrc;
-        }
-
-        public override string GetBatValue(string[] arrPackage)
-        {
-            string res = "00";
-            double ibat = Convert.ToDouble(Helper.HexToInt(arrPackage[4]));
-
-            ibat = ibat * 0.03;
-            /*if (ibat > 0)
-            {
-                res = "01";
-            }*/
-            res = ibat.ToString();
-            return res;
-        }
-
-        public override string GetTempValue(string[] arrPackage)
-        {
-            string res = "00";
-            Int32 ibat = Convert.ToInt32(Helper.HexToInt(arrPackage[5]));
-
-            ibat = ibat - 128;
-            /*if (ibat > 0)
-            {
-                res = "01";
-            }*/
-            res = ibat.ToString();
-            return res;
-        }
-    }
-
-    /// <summary>
     /// Класс для обработки сообщения о смене частоты устойства
     /// </summary>
-    class Action_3365 : Action, iAction
+    class Action_3565 : Action, iAction
     {
         string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "NUM", "CRC" };
         public override RequestData getObjectCommand(XDocument xDoc)
@@ -424,7 +274,7 @@ namespace Sys.Device
     /// <summary>
     /// Класс для обработки сообщения о смене номера устойства
     /// </summary>
-    class Action_3364 : Action, iAction
+    class Action_3564 : Action, iAction
     {
         string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "NUM", "CRC" };
         public override RequestData getObjectCommand(XDocument xDoc)
