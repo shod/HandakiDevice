@@ -332,7 +332,8 @@ namespace Sys.Device
             else
             {
                 _resDta.strEcho = FormatEchoMessage(arrPackage);
-                arrPackage[0] = "33"; 
+                arrPackage[0] = "33";
+                arrPackage[3] = "00"; 
                 _resDta.strXMLData = ArrayToXML(arrPackage, _MapProtocol);
             }
             arrPackage[0] = "21";
