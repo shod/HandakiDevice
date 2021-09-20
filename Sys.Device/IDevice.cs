@@ -668,34 +668,6 @@ namespace Sys.Device
             }
             return array;
         }
-        
-        /// <summary>
-        /// Разбивает строку на массив от устройства
-        /// </summary>
-        /// <param name="DataLine"></param>
-        /// <returns></returns>
-        public static string[] SplitLine(string DataLine, string[] _MapProtocol)
-        {
-            string text = DataLine;
-            int num = _MapProtocol.Length;
-            string[] array = new string[num];
-            int a = 0;
-            foreach (string lname in _MapProtocol)
-            {
-	            if (lname == "SOURCEADDR")
-	            {
-		            array[a] = text.Substring(0,4);
-                    text = text.Remove(0, 4);
-	            }
-	            else
-	            {
-		            array[a] = text.Substring(0,2);
-                    text =  text.Remove(0, 2);
-	            }
-                a++; 	            
-            }
-            return array;
-        }
 
         /// <summary>
         /// Разбивает строку на массив от устройства при ответе на смену ID

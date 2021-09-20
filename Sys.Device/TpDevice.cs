@@ -92,7 +92,7 @@ namespace Sys.Device
     /// <summary>
     /// Класс для обработки сообщения о нажатии кнопки
     /// </summary>
-    class Action_33 : Action_3500
+    class Action_33 : Action_3300
     {
 
     }
