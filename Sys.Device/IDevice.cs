@@ -578,8 +578,8 @@ namespace Sys.Device
             string dest = arrPackage[1];
             string source = arrPackage[2] + arrPackage[3];
             */
-
-            for (int i = 0; i < _MapProtocol.Length-1; i++)
+            // _MapProtocol.Length -1
+            for (int i = 0; i < _MapProtocol.Length; i++)
             {
                 lname = _MapProtocol[i];                
                 
@@ -669,6 +669,24 @@ namespace Sys.Device
             return array;
         }
 
+        public static string[] SplitLine(string DataLine, string[] MapProtocol)
+        {
+            int itemLen = 0;
+
+            int num = MapProtocol.Length;
+            string[] array = new string[num];
+
+            for (int i = 0; i < num; i++)
+            {
+                itemLen = Convert.ToInt16(MapProtocol[i].Split(':')[1]);
+
+                array[i] = DataLine.Substring(0, itemLen);
+                DataLine = DataLine.Substring(itemLen);
+               
+            }
+            return array;
+        }
+
         /// <summary>
         /// Разбивает строку на массив от устройства при ответе на смену ID
         /// </summary>
@@ -740,6 +758,7 @@ namespace Sys.Device
             }
             return array;
         }
+
 
         
         /// <summary>

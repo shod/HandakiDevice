@@ -61,6 +61,7 @@
     <Compile Include="Sys.Device\Helper.cs" />
     <Compile Include="Sys.Device\IDevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sys.Device\PtpDevice.cs" />
     <Compile Include="Sys.Device\RCPDevice.cs" />
     <Compile Include="Sys.Device\HandakiDevice.cs" />
     <Compile Include="Sys.Device\RCPDevice_Base.cs" />
