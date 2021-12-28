@@ -36,7 +36,7 @@ namespace Sys.Device
         }
         public static string IntToHex(int value)
         {
-            return string.Format("{0:X}", value);
+            return value.ToString("x2");// string.Format("{00:X}", value);
         }
         public static string Data_Hex_Asc(string Data)
         {

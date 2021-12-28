@@ -9,7 +9,7 @@ namespace Sys.Device
     {
 
 
-        string[] lstAction = { "73", "96", "75", "9665", "9678", "9679", "9611","96PING" , "9696" };
+        string[] lstAction = { "73", "96", "75", "9665", "9678", "9679", "9611","96PING" , "9696", "96S5" };
 
         public RCPDevice()
         {         
@@ -334,5 +334,23 @@ namespace Sys.Device
     class Action_9696 : Action_96PING, iAction
     {
 
+    }
+
+    /// <summary>
+    /// Команда на подачу звукового сигнала
+    /// </summary>
+    class Action_96S5 : Action, iAction
+    {
+        string[] _MapProtocol = { "HEADER", "REG", "CRC" };
+
+        public string ProcessToDevice(XDocument xDoc)
+        {
+            string sHeader = "96S5";
+            this.iPckLen = 2;
+            base._QueueCRCCode = "11";
+            base._MapProtocol = _MapProtocol;
+
+            return sHeader;
+        }
     }
 }
