@@ -338,7 +338,7 @@ namespace Sys.Device
                 _resDta.strXMLData = ArrayToXML(arrPackage, _MapProtocol);
             }
             arrPackage[0] = "21";
-            _resDta.IsEchoСonfirmCP = true;
+            _resDta.IsEchoСonfirmCP = false;
             return _resDta;
         }
 

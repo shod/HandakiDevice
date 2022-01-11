@@ -463,7 +463,7 @@ namespace Sys.Device
 
         public override ResponseData ProcessDevice(string txtPackageLine)
         {
-            string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "PING_ALIVE", "CRC" };
+            string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC", "PING_ALIVE"};
             base.iPckLen = 12;
             ResponseData _resDta;
             base._MapProtocol = _MapProtocol;
