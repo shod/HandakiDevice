@@ -201,6 +201,16 @@ namespace Sys.Device
             return valheader + valbody + strCrc;
         }
 
+        public override string GetBatValue(string[] arrPackage)
+        {
+            string res = "00";
+            double ibat = Convert.ToDouble(Helper.HexToInt(arrPackage[4]));
+
+            ibat = ibat * 0.03;
+ 
+            res = ibat.ToString();
+            return res;
+        }
     }
 
     class Action_3500 : Action_35
