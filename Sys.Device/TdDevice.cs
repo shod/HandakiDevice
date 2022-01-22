@@ -30,9 +30,8 @@ namespace Sys.Device
             AInfo.DeviceName = "tddevice";
             AInfo.isCheckEcho = true;
             AInfo.isWaitRequest = false;
-
-            MetaInfo.Add("E7", AInfo);
-            //MetaInfo.Add("21", "tpdevice");
+            AInfo.CountAttSend = 2;
+            MetaInfo.Add("E7", AInfo);            
 
             return MetaInfo;
         }
