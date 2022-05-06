@@ -197,6 +197,11 @@ namespace Sys.Device
         public string[] lstAction;
 
         /// <summary>
+        /// Позиция REG в пакете
+        /// </summary>        
+        public int RegPosition = 8;
+
+        /// <summary>
         /// Список действий (Action) в устройстве
         /// </summary>                
         protected void InitAction(string[] lstAction)
@@ -244,7 +249,7 @@ namespace Sys.Device
             if (txtPackageLine.Length > 8)
             {
                 sDKey = txtPackageLine.Substring(0, 2);
-                sDKey = sDKey + txtPackageLine.Substring(8, 2); //Находим байт REG
+                sDKey = sDKey + txtPackageLine.Substring(this.RegPosition, 2); //Находим байт REG
             }
             return sDKey;
         }
