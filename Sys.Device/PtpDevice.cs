@@ -11,12 +11,13 @@ namespace Sys.Device
     public class PTpDevice : Device, IDevice
     {
 
-        string[] lstAction = { "35", "3500", "3501", "3565", "3564" };
+        string[] lstAction = { "35", "3500", "3501", "3565", "3564", "3509"};
 
         public PTpDevice()
         {                      
             InitAction(lstAction);
             _PingHeader = "35";
+            this.RegPosition = 6;
         }   
 
         /// <summary>
@@ -56,12 +57,14 @@ namespace Sys.Device
             AInfo.TimeLive = 300;    
             MetaInfo.Add("3501", AInfo); // Нажата кнопка-1*/
 
-            return MetaInfo;
-        }
+            AInfo = new ActionMetaInfo();
+            AInfo.DeviceName = "tpdevice";
+            AInfo.isCheckEcho = false;
+            AInfo.isWaitRequest = true;
+            AInfo.TimeLive = 300;
+            MetaInfo.Add("3509", AInfo); // таймера ПТП периодического выхода на связь, количества попыток соединения и времени ожидания ответа от РС
 
-        public override string getActionIndex(string txtPackageLine)
-        {
-            return txtPackageLine.Substring(0, 2);
+            return MetaInfo;
         }        
 
     }
@@ -82,7 +85,7 @@ namespace Sys.Device
             this.iPckLen = 24;
         }
 
-        public ResponseData ProcessDevice(string txtPackageLine)
+        public virtual ResponseData ProcessDevice(string txtPackageLine)
         {
             ResponseData _resDta = new ResponseData();
             string[] var_mapProtocol;
@@ -158,12 +161,9 @@ namespace Sys.Device
                             break;
                         case "DESTADDR":
                             sPackage = xEvent.Element("DESTADDR").Value;
-                            break;
-                        case "SOURCEADDR":
-                            sPackage = sPackage + RPCAddr;
-                            break;
+                            break;                        
                         case "NBYTE":
-                            sPackage = sPackage + Helper.IntToHex(iPckLen);
+                            sPackage = sPackage + Helper.IntToHex(iPckLen/2);
                             break;
                         case "REG":
                             sPackage = sPackage + xEvent.Element("PARAMS").Element(lname).Value;
@@ -218,9 +218,13 @@ namespace Sys.Device
         
         public Action_3500()
         {
-            this._MapProtocol = new[] { "HEADER", "DESTADDR", "REG", "NBYTE", "CRC" };
+            this._MapProtocol = new[] { "HEADER", "SOURCEADDR", "REG", "NBYTE", "BAT", "CRC", "UID", "RSII" };
+            this._MapProtocolP = new[] { "HEADER:2", "DESTADDR:4", "REG:2", "NBYTE:2", "BAT:2", "CRC:2", "UID:8", "RSII:2" };
+            this.iPckLen = 24;
+
+            /*this._MapProtocol = new[] { "HEADER", "DESTADDR", "REG", "NBYTE", "CRC" };
             this._MapProtocolP = new[] { "HEADER:2", "DESTADDR:4", "REG:2", "NBYTE:2", "CRC:2" };
-            this.iPckLen = 12;
+            this.iPckLen = 12;*/
 
             
         }
@@ -233,9 +237,76 @@ namespace Sys.Device
 
         public Action_3501()
         {
-            this._MapProtocol = new[] { "HEADER", "DESTADDR", "REG", "NBYTE", "BAT", "CRC", "UID", "RSII" };
-            this._MapProtocolP = new[] { "HEADER:2", "DESTADDR:4", "REG:2", "NBYTE:2", "BAT:2", "CRC:2", "UID:8", "RSII:2" };
+            this._MapProtocol = new[] { "HEADER", "SOURCEADDR", "REG", "NBYTE", "BAT", "CRC", "UID", "RSII" };
+            this._MapProtocolP = new[] { "HEADER:2", "SOURCEADDR:4", "REG:2", "NBYTE:2", "BAT:2", "CRC:2", "UID:8", "RSII:2" };
             this.iPckLen = 24;
+        }
+
+
+    }
+
+
+    class Action_3509 : Action_35
+    {
+
+        public Action_3509()
+        {
+            this._MapProtocol = new[] { "HEADER", "DESTADDR", "REG", "NBYTE", "PING_NS", "PING_WT", "TSLEEP", "CRC" };
+            this._MapProtocolP = new[] { "HEADER:2", "DESTADDR:4", "REG:2", "NBYTE:2", "PING_NS:2", "PING_WT:2", "TSLEEP:4", "CRC:2" };
+            this.iPckLen = 20;
+
+        }
+
+        public override ResponseData ProcessDevice(string txtPackageLine)
+        {
+
+            string[] _MapProtocol = new[] { "HEADER", "SOURCEADDR", "REG", "NBYTE", "PING_NS", "PING_WT", "TSLEEP", "CRC", "UID", "RSII" };
+            string[] _MapProtocolP = new[] { "HEADER:2", "SOURCEADDR:4", "REG:2", "NBYTE:2", "PING_NS:2", "PING_WT:2", "TSLEEP:4", "CRC:2", "UID:8", "RSII:2" };
+            this.iPckLen = 30;
+            ResponseData _resDta = new ResponseData();
+            string[] var_mapProtocol;
+            var_mapProtocol = _MapProtocol;
+
+            _resDta.strHead = "35";
+            _resDta.IsError = false;
+
+            txtPackageLine = txtPackageLine.Replace(" ", "");
+
+            if (txtPackageLine.Length < iPckLen)
+            {
+                _resDta.IsError = true;
+                return _resDta;
+            }
+
+            string txtPackage = txtPackageLine.Substring(0, iPckLen);
+
+            string[] arrPackage = SplitLine(txtPackage, _MapProtocolP);
+
+            _resDta.strIdDevice = arrPackage[1];
+            _resDta.strDataRest = txtPackageLine.Substring(iPckLen);
+
+            if (arrPackage.Length != _MapProtocol.Length || arrPackage[7].ToUpper() == "FF")
+            {
+                _resDta.IsError = true;
+            }
+            
+            string txtPackageData = arrPackage[1] + arrPackage[2] + arrPackage[3] + arrPackage[4] + arrPackage[5] + arrPackage[6];
+            string strCrc = Helper.CreateCRC(txtPackageData);
+
+            /*Проверка на верность CRC*/
+            if (strCrc != arrPackage[7])
+            {
+                _resDta.IsError = true;
+            }
+            else
+            {
+                _resDta.strEcho = FormatEchoMessage(arrPackage);
+                arrPackage[8] = arrPackage[8].Substring(4, 4); // UID
+                _resDta.strXMLData = ArrayToXML(arrPackage, var_mapProtocol);
+            }
+            _resDta.IsEchoСonfirmCP = false;
+            _resDta.IsBeep = false;
+            return _resDta;
         }
 
 
