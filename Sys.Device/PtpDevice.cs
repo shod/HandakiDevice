@@ -139,7 +139,7 @@ namespace Sys.Device
             return _resDta;
         }
 
-        public string ProcessToDevice(XDocument xDoc)
+        public virtual string ProcessToDevice(XDocument xDoc)
         {
             string sPackage = "";
             string strCrc;
@@ -163,7 +163,7 @@ namespace Sys.Device
                             sPackage = xEvent.Element("DESTADDR").Value;
                             break;                        
                         case "NBYTE":
-                            sPackage = sPackage + Helper.IntToHex(iPckLen/2);
+                            sPackage = sPackage + Helper.IntToHex(this.iPckLen / 2);
                             break;
                         case "REG":
                             sPackage = sPackage + xEvent.Element("PARAMS").Element(lname).Value;
@@ -309,7 +309,16 @@ namespace Sys.Device
             return _resDta;
         }
 
+        public override string ProcessToDevice(XDocument xDoc){
+            string[] _MapProtocol = new[] { "HEADER", "DESTADDR", "REG", "NBYTE", "PING_NS", "PING_WT", "TSLEEP", "CRC" };
+            string[] _MapProtocolP = new[] { "HEADER:2", "DESTADDR:4", "REG:2", "NBYTE:2", "PING_NS:2", "PING_WT:2", "TSLEEP:4", "CRC:2" };
+            this.iPckLen = 20;
 
+            base._MapProtocol = _MapProtocol;
+            string sreRes = base.ProcessToDevice(xDoc);            
+
+            return sreRes;
+        }
     }
 
     /// <summary>
