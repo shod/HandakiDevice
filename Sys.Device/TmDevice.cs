@@ -26,13 +26,28 @@ namespace Sys.Device
         public Dictionary<string, ActionMetaInfo> GetMetaInfo()
         {
             var MetaInfo = new Dictionary<string, ActionMetaInfo>();
+
             ActionMetaInfo AInfo = new ActionMetaInfo();
+            AInfo.DeviceName = "tmdevice";
+            AInfo.isCheckEcho = false;
+            AInfo.isWaitRequest = false;
+            AInfo.CountAttSend = 2;
+            AInfo.isDeleteCommandAfterSend = true;
+            MetaInfo.Add("7701", AInfo); // запрос на установку фонарей
+                        
+            AInfo = new ActionMetaInfo();
             AInfo.DeviceName = "tmdevice";
             AInfo.isCheckEcho = true;
             AInfo.isWaitRequest = false;
-            
+            AInfo.CountAttSend = 2;
             MetaInfo.Add("77", AInfo);
-            //MetaInfo.Add("21", "tpdevice");
+
+            AInfo = new ActionMetaInfo();
+            AInfo.DeviceName = "tmdevice";
+            AInfo.isCheckEcho = true;
+            AInfo.isWaitRequest = false;
+            AInfo.CountAttSend = 3;
+            MetaInfo.Add("770A", AInfo);
 
             return MetaInfo;
         }
@@ -178,6 +193,7 @@ namespace Sys.Device
             _resDta.strXMLData = "";
             _resDta.strHead = "77";
             _resDta.IsEchoСonfirmCP = true;
+  
             return _resDta;
         }
 
@@ -455,10 +471,10 @@ namespace Sys.Device
             ResData.isDeleteAllCommand = false;
             ResData.isDeleteSimilarCommand = false;
 
-            if (strNum == "00")
+            /*if (strNum == "00")
             {
                 ResData.isDeleteSimilarCommand = true;
-            }
+            }*/
             _QueueCRCCode = "";
             return ResData;
         }

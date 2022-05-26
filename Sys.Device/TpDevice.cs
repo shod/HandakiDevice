@@ -30,7 +30,8 @@ namespace Sys.Device
             AInfo.DeviceName = "tpdevice";
             AInfo.isCheckEcho = false;
             AInfo.isWaitRequest = true;
-            AInfo.isDeleteCommandAfterSend = false;
+            AInfo.isDeleteCommandAfterSend = true;
+            AInfo.CountAttSend = 1;
             AInfo.TimeLive = 120;
             MetaInfo.Add("33", AInfo); //Сообщение о нажатии на кнопки  ТП
 
@@ -291,7 +292,7 @@ namespace Sys.Device
     class Action_21 : Action, iAction
     {
         //"PING_ALIVE" 
-        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "TB", "RSSI", "PING_ALIVE", "CRC" };
+        string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "BAT", "TB", "RSSI", "CRC", "PING_ALIVE"};
         int iPckLen = (8 * 2)+2;
 
         public ResponseData ProcessDevice(string txtPackageLine)
@@ -333,11 +334,11 @@ namespace Sys.Device
             {
                 _resDta.strEcho = FormatEchoMessage(arrPackage);
                 arrPackage[0] = "33";
-                arrPackage[3] = "00"; 
+                arrPackage[3] = "00";
                 _resDta.strXMLData = ArrayToXML(arrPackage, _MapProtocol);
             }
             arrPackage[0] = "21";
-            _resDta.IsEchoСonfirmCP = true;
+            _resDta.IsEchoСonfirmCP = false;
             return _resDta;
         }
 

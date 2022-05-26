@@ -30,9 +30,8 @@ namespace Sys.Device
             AInfo.DeviceName = "tddevice";
             AInfo.isCheckEcho = true;
             AInfo.isWaitRequest = false;
-
-            MetaInfo.Add("E7", AInfo);
-            //MetaInfo.Add("21", "tpdevice");
+            AInfo.CountAttSend = 2;
+            MetaInfo.Add("E7", AInfo);            
 
             return MetaInfo;
         }
@@ -463,7 +462,7 @@ namespace Sys.Device
 
         public override ResponseData ProcessDevice(string txtPackageLine)
         {
-            string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "PING_ALIVE", "CRC" };
+            string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "CRC", "PING_ALIVE"};
             base.iPckLen = 12;
             ResponseData _resDta;
             base._MapProtocol = _MapProtocol;
