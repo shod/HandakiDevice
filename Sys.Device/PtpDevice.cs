@@ -11,7 +11,7 @@ namespace Sys.Device
     public class PTpDevice : Device, IDevice
     {
 
-        string[] lstAction = { "35", "3500", "3501", "3565", "3564", "3509"};
+        string[] lstAction = { "35", "3500", "3501", "3502", "3565", "3564", "3509" };
 
         public PTpDevice()
         {                      
@@ -116,7 +116,7 @@ namespace Sys.Device
 
             _resDta.IsBeep = true;
 
-            if (arrPackage[2] == "00")
+            if (arrPackage[2] == "00" || arrPackage[2] == "02")
             {
                 _resDta.IsBeep = false;
             }
@@ -236,6 +236,19 @@ namespace Sys.Device
     {
 
         public Action_3501()
+        {
+            this._MapProtocol = new[] { "HEADER", "SOURCEADDR", "REG", "NBYTE", "BAT", "CRC", "UID", "RSII" };
+            this._MapProtocolP = new[] { "HEADER:2", "SOURCEADDR:4", "REG:2", "NBYTE:2", "BAT:2", "CRC:2", "UID:8", "RSII:2" };
+            this.iPckLen = 24;
+        }
+
+
+    }
+
+    class Action_3502 : Action_35
+    {
+
+        public Action_3502()
         {
             this._MapProtocol = new[] { "HEADER", "SOURCEADDR", "REG", "NBYTE", "BAT", "CRC", "UID", "RSII" };
             this._MapProtocolP = new[] { "HEADER:2", "SOURCEADDR:4", "REG:2", "NBYTE:2", "BAT:2", "CRC:2", "UID:8", "RSII:2" };
