@@ -146,7 +146,7 @@ namespace Sys.Device
             }else{
                 var_mapProtocol = _MapProtocol;
 
-                if (arrPackage[3] == "01")
+                if (arrPackage[3] == "01" || arrPackage[3] == "04")
                 {
                     _resDta.IsBeep = true;                        
                 }                

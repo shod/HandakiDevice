@@ -61,7 +61,7 @@ namespace Sys.Device
             AInfo.DeviceName = "tpdevice";
             AInfo.isCheckEcho = false;
             AInfo.isWaitRequest = true;
-            AInfo.TimeLive = 300;
+            AInfo.TimeLive = 1800;
             MetaInfo.Add("3509", AInfo); // таймера ПТП периодического выхода на связь, количества попыток соединения и времени ожидания ответа от РС
 
             return MetaInfo;
