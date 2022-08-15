@@ -32,8 +32,17 @@ namespace Sys.Device
             AInfo.isWaitRequest = true;
             AInfo.isDeleteCommandAfterSend = true;
             AInfo.CountAttSend = 1;
-            AInfo.TimeLive = 120;
+            AInfo.TimeLive = 120;            
             MetaInfo.Add("33", AInfo); //Сообщение о нажатии на кнопки  ТП
+
+            AInfo = new ActionMetaInfo();
+            AInfo.DeviceName = "tpdevice";
+            AInfo.isCheckEcho = false;
+            AInfo.isDeleteCommandAfterSend = true;
+            //AInfo.isWaitRequest = true;
+            AInfo.CountAttSend = 0;
+            AInfo.TimeLive = 60;
+            MetaInfo.Add("3300", AInfo); ///Сообщение о нажатии кнопки Отмена
 
             AInfo = new ActionMetaInfo();
             AInfo.DeviceName = "tpdevice";
@@ -159,9 +168,10 @@ namespace Sys.Device
                 _resDta.IsError = true;
             }
             else
-            {                
-                _resDta.strEcho = FormatEchoMessage(arrPackage);
+            {
                 _resDta.strXMLData = ArrayToXML(arrPackage, var_mapProtocol);
+                arrPackage[3] = "00"; // Переделываем на команду спать
+                _resDta.strEcho = FormatEchoMessage(arrPackage);                
             }
             _resDta.IsEchoСonfirmCP = true;
             return _resDta;

@@ -11,7 +11,7 @@ namespace Sys.Device
     public class PtmDevice : Device, IDevice
     {
 
-        string[] lstAction = { "E9", "E909", "E900", "E901" };
+        string[] lstAction = { "E9", "E909", "E900", "E901", "E902" };
 
         public PtmDevice()
         {
@@ -57,8 +57,16 @@ namespace Sys.Device
             AInfo.DeviceName = "ptmdevice";
             AInfo.isCheckEcho = false;
             AInfo.isWaitRequest = false;
-            AInfo.CountAttSend = 2;            
+            AInfo.CountAttSend = 2;                  
             MetaInfo.Add("E901", AInfo);
+
+            // Нажатие на кнопку 2
+            AInfo = new ActionMetaInfo();
+            AInfo.DeviceName = "ptmdevice";
+            AInfo.isCheckEcho = false;
+            AInfo.isWaitRequest = false;
+            AInfo.CountAttSend = 2;
+            MetaInfo.Add("E902", AInfo);
 
             return MetaInfo;
         }
@@ -94,6 +102,21 @@ namespace Sys.Device
             this._MapProtocol = new[] { "HEADER", "DESTADDR", "REG", "NBYTE", "CRC" };
             this._MapProtocolP = new[] { "HEADER:2", "DESTADDR:4", "REG:2", "NBYTE:2", "CRC:2" };
             this.iPckLen = 12;
+        }
+
+    }
+
+    /// <summary>
+    /// Класс для обработки проверки заряда батареи
+    /// </summary>
+    class Action_E902 : Action_E901
+    {
+
+        public Action_E902()
+        {
+            this._MapProtocol = new[] { "HEADER", "DESTADDR", "REG", "NBYTE", "BAT", "CRC" };
+            this._MapProtocolP = new[] { "HEADER:2", "DESTADDR:4", "REG:2", "NBYTE:2", "BAT:2", "CRC:2" };
+            this.iPckLen = 14;
         }
 
     }
@@ -258,7 +281,7 @@ namespace Sys.Device
                 _resDta.IsError = true;
             }
 
-            _resDta.IsBeep = true;
+            _resDta.IsBeep = false;
 
 
             for (int i = 1; i < (arrPackage.Length - 1); i++)
