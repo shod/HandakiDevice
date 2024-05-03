@@ -60,16 +60,19 @@ namespace Sys.Device
 
             AInfo = new ActionMetaInfo();
             AInfo.DeviceName = "tpdevice";
-            AInfo.isCheckEcho = true;
+            AInfo.isCheckEcho = false;
             AInfo.isWaitRequest = true;
             AInfo.TimeLive = 3600;
+            AInfo.CountAttSend = 1;
             MetaInfo.Add("39", AInfo); // пустой класс
 
             AInfo = new ActionMetaInfo();
             AInfo.DeviceName = "tpdevice";
-            AInfo.isCheckEcho = true;
+            AInfo.isCheckEcho = false;
             AInfo.isWaitRequest = true;
             AInfo.TimeLive = 300;
+            AInfo.CountAttSend = 1;
+            AInfo.isDeleteCommandAfterSend = true;            
             MetaInfo.Add("3364", AInfo); // смена номера устройства
 
             AInfo = new ActionMetaInfo();
@@ -462,6 +465,12 @@ namespace Sys.Device
             _resDta = base.ProcessDevice(txtPackageLine);
             _resDta.IsEchoСonfirmCP = true;
             return _resDta;
+        }
+
+        public override string GetQueueCRCCode(string CRC)
+        {
+            _QueueCRCCode = CRC;
+            return _QueueCRCCode;
         }
     }
 }

@@ -5,7 +5,10 @@ using System.Text;
 
 namespace Sys.Device
 {
-
+    
+    /// <summary>
+    /// Класс для описания команды для устройства в очереди
+    /// </summary>
     public class ActionMetaInfo
     {
         /// <summary>
@@ -103,7 +106,10 @@ namespace Sys.Device
         /// </summary>
         public String strXMLData;
         public String strHead;
-
+        /// <summary>
+        /// Reg параметр
+        /// </summary>
+        public String Reg;
         /// <summary>
         /// Для проверки очередей
         /// По-умолчанию равен CRC
@@ -185,6 +191,8 @@ namespace Sys.Device
     public abstract class Device
     {
         iAction actClass;
+
+        protected string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "NUM", "CRC" };
 
         /// <summary>
         /// Список устройств
@@ -373,7 +381,7 @@ namespace Sys.Device
         {
 
             string RPCAddr = "00";
-            string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "NUM", "CRC" };
+            //string[] _MapProtocol = { "HEADER", "DESTADDR", "SOURCEADDR", "REG", "NUM", "CRC" };
             string[] _MapValue = { "" };
             string sPackage = "";
             string strCrc;
@@ -535,6 +543,14 @@ namespace Sys.Device
 
         public int iPckLen = 6 * 2; /*длина пакета от устройства*/
 
+        /// <summary>
+        /// Позиция REG в пакете
+        /// </summary>
+        public int _RegPositon = 8;
+
+        /// <summary>
+        /// Устанавливает CRC код для проверки очереди
+        /// </summary>
         public string _QueueCRCCode = "";
 
         /// <summary>
@@ -544,7 +560,7 @@ namespace Sys.Device
         public bool IsEchoСonfirmTODevice = false;
 
         /// <summary>
-        /// Метод возвращающий CRC код для очечреди
+        /// Метод возвращающий CRC код для очереди
         /// </summary>
         /// <returns></returns>
         public virtual string GetQueueCRCCode(string CRC)
@@ -651,7 +667,7 @@ namespace Sys.Device
         /// </summary>
         /// <param name="DataLine"></param>
         /// <returns></returns>
-        public static string[] SplitLine(string DataLine)
+        public virtual string[] SplitLine(string DataLine)
         {
             string text = DataLine;
             int itemLen = 2;
@@ -793,7 +809,8 @@ namespace Sys.Device
                 _resDta.strDataRest = txtPackageLine.Substring(iPckLen);
 
                 // Это проверка на REG = 64 - это ответ на прошивку номера
-                string strReg = txtPackageLine.Substring(8, 2);
+                string strReg = txtPackageLine.Substring(_RegPositon, 2);
+                _resDta.Reg = strReg;
 
                 string[] arrPackage;
                 if (strReg == "64")

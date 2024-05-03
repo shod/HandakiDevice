@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -66,6 +67,7 @@
     <Compile Include="Sys.Device\HandakiDevice.cs" />
     <Compile Include="Sys.Device\RCPDevice_Base.cs" />
     <Compile Include="Sys.Device\PtmDevice .cs" />
+    <Compile Include="Sys.Device\BrDevice.cs" />
     <Compile Include="Sys.Device\TmDevice_Base.cs" />
     <Compile Include="Sys.Device\TpDevice.cs" />
     <Compile Include="Sys.Device\TmDevice.cs" />
